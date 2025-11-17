@@ -1,17 +1,18 @@
 import { Server } from "@modelcontextprotocol/sdk/server";
 
-let tasks = [];
-let nextId = 1;
-
 const server = new Server({
   name: "todo-mcp",
   version: "1.0.0",
 });
 
-// add_task
+// In-memory task list
+let tasks = [];
+let nextId = 1;
+
+// Add task
 server.addTool({
   name: "add_task",
-  description: "Add a task",
+  description: "Add a new task",
   inputSchema: {
     type: "object",
     properties: {
@@ -27,14 +28,14 @@ server.addTool({
       title,
       notes: notes ?? "",
       due_date,
-      status: "pending"
+      status: "pending",
     };
     tasks.push(task);
     return task;
   }
 });
 
-// get_tasks
+// Get tasks
 server.addTool({
   name: "get_tasks",
   description: "Get all tasks",
@@ -42,10 +43,10 @@ server.addTool({
   handler: async () => tasks
 });
 
-// update_task_status
+// Update task status
 server.addTool({
   name: "update_task_status",
-  description: "Update task status",
+  description: "Update a task",
   inputSchema: {
     type: "object",
     properties: {
@@ -62,14 +63,11 @@ server.addTool({
   }
 });
 
-// Node-style Vercel handler
+// Node Serverless handler
 export default async function handler(req, res) {
-  const response = await server.handleHTTP(req, {
-    url: "/mcp"
-  });
+  const response = await server.handleHTTP(req, { url: "/mcp" });
 
-  res
-    .status(response.status)
-    .setHeader("Content-Type", "application/json")
-    .send(JSON.stringify(response.body));
+  res.status(response.status);
+  res.setHeader("Content-Type", "application/json");
+  res.send(JSON.stringify(response.body));
 }
