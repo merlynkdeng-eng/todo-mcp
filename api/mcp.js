@@ -1,4 +1,4 @@
-import { Server } from "@modelcontextprotocol/sdk/server";
+import { Server } from "@modelcontextprotocol/sdk/dist/server/index.js";
 
 const server = new Server({
   name: "todo-mcp",
